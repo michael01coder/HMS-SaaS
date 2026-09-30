@@ -1,0 +1,16 @@
+# Secrets — every service has its own .env, never commit these
+**/.env
+
+# Build output
+**/bin/
+**/obj/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db

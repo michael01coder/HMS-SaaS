@@ -1,0 +1,40 @@
+<Solution>
+  <Folder Name="/AuthService/">
+    <Project Path="AuthService/HMS.AuthService.Api/HMS.AuthService.Api.csproj" />
+    <Project Path="AuthService/HMS.AuthService.Common/HMS.AuthService.Common.csproj" />
+    <Project Path="AuthService/HMS.AuthService.Domain/HMS.AuthService.Domain.csproj" />
+    <Project Path="AuthService/HMS.AuthService.DTO/HMS.AuthService.DTO.csproj" />
+    <Project Path="AuthService/HMS.AuthService.Repository/HMS.AuthService.Repository.csproj" />
+    <Project Path="AuthService/HMS.AuthService.Service/HMS.AuthService.Service.csproj" />
+  </Folder>
+  <Folder Name="/TenantService/">
+    <Project Path="TenantService/HMSTenant.Data/HMSTenant.Data.csproj" />
+    <Project Path="TenantService/HMSTenant.Domain/HMSTenant.Domain.csproj" />
+    <Project Path="TenantService/HMSTenant.DTO/HMSTenant.DTO.csproj" />
+    <Project Path="TenantService/HMSTenant.Repository/HMSTenant.Repository.csproj" />
+    <Project Path="TenantService/HMSTenantService.Api/HMSTenantService.Api.csproj" />
+  </Folder>
+  <Folder Name="/HotelService/">
+    <Project Path="HotelService/HMSHotel.Data/HMSHotel.Data.csproj" />
+    <Project Path="HotelService/HMSHotel.Domain/HMSHotel.Domain.csproj" />
+    <Project Path="HotelService/HMSHotel.DTO/HMSHotel.DTO.csproj" />
+    <Project Path="HotelService/HMSHotel.Repository/HMSHotel.Repository.csproj" />
+    <Project Path="HotelService/HMSHotelServices.Api/HMSHotelServices.Api.csproj" />
+  </Folder>
+  <Folder Name="/RoomManagementService/">
+    <Project Path="RoomManagementService/HMSRoomManagement.Data/HMSRoomManagement.Data.csproj" />
+    <Project Path="RoomManagementService/HMSRoomManagement.Domain/HMSRoomManagement.Domain.csproj" />
+    <Project Path="RoomManagementService/HMSRoomManagement.DTO/HMSRoomManagement.DTO.csproj" />
+    <Project Path="RoomManagementService/HMSRoomManagement.Repository/HMSRoomManagement.Repository.csproj" />
+    <Project Path="RoomManagementService/RoomManagementService.Api/RoomManagementService.Api.csproj" />
+  </Folder>
+  <Folder Name="/StaffService/">
+    <Project Path="StaffService/HMS.StaffService.Data/HMS.StaffService.Common.csproj" />
+    <Project Path="StaffService/HMS.StaffService.Domain/HMS.StaffService.Domain.csproj" />
+    <Project Path="StaffService/HMS.StaffService.DTO/HMS.StaffService.DTO.csproj" />
+    <Project Path="StaffService/HMS.StaffService.Repo/HMS.StaffService.Repository.csproj" />
+    <Project Path="StaffService/HMS.StaffService.Service/HMS.StaffService.Service.csproj" />
+    <Project Path="StaffService/HMS.StaffService.WebApi/HMS.StaffService.WebApi.csproj" />
+  </Folder>
+  <Project Path="HMS.ApiGateway/HMS.ApiGateway.csproj" />
+</Solution>

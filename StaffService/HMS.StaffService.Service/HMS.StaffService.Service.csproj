@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="Mapster" Version="10.0.12" />
+		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.12" />
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.22.0" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\HMS.StaffService.Data\HMS.StaffService.Common.csproj" />
+	  <ProjectReference Include="..\HMS.StaffService.Domain\HMS.StaffService.Domain.csproj" />
+	  <ProjectReference Include="..\HMS.StaffService.DTO\HMS.StaffService.DTO.csproj" />
+	  <ProjectReference Include="..\HMS.StaffService.Repo\HMS.StaffService.Repository.csproj" />
+	</ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
