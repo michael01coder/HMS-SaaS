@@ -1,6 +1,5 @@
 using HMS.AuthService.Common.Enums;
 using HMS.AuthService.Common.Exceptions;
-using HMS.AuthService.Domain;
 using HMS.AuthService.Domain.Data;
 using HMS.AuthService.DTO;
 using HMS.AuthService.Repository.Contracts;
