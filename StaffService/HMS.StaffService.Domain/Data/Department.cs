@@ -1,0 +1,31 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HMS.StaffService.Domain.Data
+{
+    [Table("Departments")]
+    public class Department
+    {
+        [Key]
+        public int DepartmentId { get; set; }
+
+        [Required]
+        public Guid HotelId { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string DepartmentName { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(20)]
+        public string DepartmentCode { get; set; } = string.Empty;
+
+        public bool IsActive { get; set; } = true;
+
+        public int BudgetedHeadcount { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public virtual ICollection<Staff> StaffMembers { get; set; } = new List<Staff>();
+    }
+}
