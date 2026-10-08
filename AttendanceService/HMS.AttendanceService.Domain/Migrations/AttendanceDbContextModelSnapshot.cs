@@ -118,6 +118,69 @@ namespace HMS.AttendanceService.Domain.Migrations
                     b.ToTable("AttendanceAnomalies");
                 });
 
+            modelBuilder.Entity("HMS.AttendanceService.Domain.Data.LeaveApplication", b =>
+                {
+                    b.Property<Guid>("LeaveApplicationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("AppliedOn")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("ApprovalDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid?>("ApprovedByStaffId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DefaultDaysPerYear")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("HotelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LeaveTypeName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("StaffId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("TotalDays")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("LeaveApplicationId");
+
+                    b.HasIndex("HotelId", "StaffId", "StartDate");
+
+                    b.ToTable("LeaveApplications");
+                });
+
             modelBuilder.Entity("HMS.AttendanceService.Domain.Data.AttendanceAnomaly", b =>
                 {
                     b.HasOne("HMS.AttendanceService.Domain.Data.Attendance", "Attendance")

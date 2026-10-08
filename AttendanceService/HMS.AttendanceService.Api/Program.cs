@@ -76,9 +76,11 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<IAttendanceAnomalyRepository, AttendanceAnomalyRepository>();
+builder.Services.AddScoped<ILeaveApplicationRepository, LeaveApplicationRepository>();
 
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IAttendanceAnomalyService, AttendanceAnomalyService>();
+builder.Services.AddScoped<ILeaveApplicationService, LeaveApplicationService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

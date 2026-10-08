@@ -1,6 +1,7 @@
 ﻿using HMS.AttendanceService.Domain.Data;
 using HMS.AttendanceService.DTO.Attendance;
 using HMS.AttendanceService.DTO.Anomaly;
+using HMS.AttendanceService.DTO.Leave;
 using Mapster;
 
 namespace HMS.AttendanceService.Api.Configurations
@@ -43,6 +44,37 @@ namespace HMS.AttendanceService.Api.Configurations
                 .Ignore(dest => dest.StaffId)
                 .Ignore(dest => dest.ReportedAt)
                 .Ignore(dest => dest.Attendance);
+
+            // ----------------------------------------------------
+            // Leave Application Mappings
+            // ----------------------------------------------------
+            config.NewConfig<LeaveApplication, LeaveApplicationDto>();
+
+            config.NewConfig<CreateLeaveApplicationDto, LeaveApplication>()
+                .Ignore(dest => dest.LeaveApplicationId)
+                .Ignore(dest => dest.TenantId)
+                .Ignore(dest => dest.HotelId)
+                .Ignore(dest => dest.Status)
+                .Ignore(dest => dest.AppliedOn)
+                .Ignore(dest => dest.ApprovedByStaffId)
+                .Ignore(dest => dest.ApprovalDate)
+                .Ignore(dest => dest.CreatedAt)
+                .Ignore(dest => dest.UpdatedAt);
+
+            config.NewConfig<UpdateLeaveStatusDto, LeaveApplication>()
+                .IgnoreNullValues(true)
+                .Ignore(dest => dest.LeaveApplicationId)
+                .Ignore(dest => dest.TenantId)
+                .Ignore(dest => dest.HotelId)
+                .Ignore(dest => dest.StaffId)
+                .Ignore(dest => dest.LeaveTypeName)
+                .Ignore(dest => dest.StartDate)
+                .Ignore(dest => dest.EndDate)
+                .Ignore(dest => dest.TotalDays)
+                .Ignore(dest => dest.Reason)
+                .Ignore(dest => dest.AppliedOn)
+                .Ignore(dest => dest.DefaultDaysPerYear)
+                .Ignore(dest => dest.CreatedAt);
         }
     }
 }

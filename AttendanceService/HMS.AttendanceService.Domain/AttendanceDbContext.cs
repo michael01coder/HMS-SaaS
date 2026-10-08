@@ -1,6 +1,5 @@
 ﻿using HMS.AttendanceService.Domain.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace HMS.AttendanceService.Domain
 {
@@ -10,6 +9,7 @@ namespace HMS.AttendanceService.Domain
 
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<AttendanceAnomaly> AttendanceAnomalies { get; set; }
+        public DbSet<LeaveApplication> LeaveApplications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +33,9 @@ namespace HMS.AttendanceService.Domain
                 .WithMany(at => at.Anomalies)
                 .HasForeignKey(a => a.AttendanceId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<LeaveApplication>()
+                .HasIndex(l => new { l.HotelId, l.StaffId, l.StartDate });
         }
     }
 }
