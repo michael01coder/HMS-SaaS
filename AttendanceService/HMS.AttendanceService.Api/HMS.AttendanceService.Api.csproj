@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="DotNetEnv" Version="3.2.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.11">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="Mapster" Version="10.0.12" />
+	  <PackageReference Include="Mapster.DependencyInjection" Version="10.0.11" />
+	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+	  <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.22.0" />
+	  <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HMS.AttendanceService.Common\HMS.AttendanceService.Common.csproj" />
+    <ProjectReference Include="..\HMS.AttendanceService.Domain\HMS.AttendanceService.Domain.csproj" />
+    <ProjectReference Include="..\HMS.AttendanceService.DTO\HMS.AttendanceService.DTO.csproj" />
+    <ProjectReference Include="..\HMS.AttendanceService.Repositories\HMS.AttendanceService.Repository.csproj" />
+    <ProjectReference Include="..\HMS.AttendanceService.Service\HMS.AttendanceService.Service.csproj" />
+  </ItemGroup>
+
+</Project>

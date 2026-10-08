@@ -1,0 +1,6 @@
+@HMS.AttendanceService.Api_HostAddress = http://localhost:5050
+
+GET {{HMS.AttendanceService.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

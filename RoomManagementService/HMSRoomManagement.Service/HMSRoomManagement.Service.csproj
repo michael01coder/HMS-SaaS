@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Mapster" Version="10.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HMSRoomManagement.Common\HMSRoomManagement.Common.csproj" />
+    <ProjectReference Include="..\HMSRoomManagement.Domain\HMSRoomManagement.Domain.csproj" />
+    <ProjectReference Include="..\HMSRoomManagement.DTO\HMSRoomManagement.DTO.csproj" />
+    <ProjectReference Include="..\HMSRoomManagement.Repository\HMSRoomManagement.Repository.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

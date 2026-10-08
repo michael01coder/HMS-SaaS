@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Mapster" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HMSTenant.Common\HMSTenant.Common.csproj" />
+    <ProjectReference Include="..\HMSTenant.Domain\HMSTenant.Domain.csproj" />
+    <ProjectReference Include="..\HMSTenant.DTO\HMSTenant.DTO.csproj" />
+    <ProjectReference Include="..\HMSTenant.Repository\HMSTenant.Repository.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
