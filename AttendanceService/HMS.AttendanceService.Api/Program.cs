@@ -77,10 +77,14 @@ builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericReposito
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<IAttendanceAnomalyRepository, AttendanceAnomalyRepository>();
 builder.Services.AddScoped<ILeaveApplicationRepository, LeaveApplicationRepository>();
+builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
+builder.Services.AddScoped<IShiftAllocationRepository, ShiftAllocationRepository>();
+builder.Services.AddScoped<IShiftSwapRequestRepository, ShiftSwapRequestRepository>();
 
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IAttendanceAnomalyService, AttendanceAnomalyService>();
 builder.Services.AddScoped<ILeaveApplicationService, LeaveApplicationService>();
+builder.Services.AddScoped<IShiftService, ShiftService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
