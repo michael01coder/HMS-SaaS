@@ -181,6 +181,141 @@ namespace HMS.AttendanceService.Domain.Migrations
                     b.ToTable("LeaveApplications");
                 });
 
+            modelBuilder.Entity("HMS.AttendanceService.Domain.Data.Shift", b =>
+                {
+                    b.Property<Guid>("ShiftId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("interval");
+
+                    b.Property<Guid>("HotelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ShiftCategory")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("ShiftName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("interval");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ShiftId");
+
+                    b.ToTable("Shifts");
+                });
+
+            modelBuilder.Entity("HMS.AttendanceService.Domain.Data.ShiftAllocation", b =>
+                {
+                    b.Property<Guid>("AllocationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AllocationType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("HotelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("ShiftId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("StaffId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("WorkDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("AllocationId");
+
+                    b.HasIndex("ShiftId");
+
+                    b.ToTable("ShiftAllocations");
+                });
+
+            modelBuilder.Entity("HMS.AttendanceService.Domain.Data.ShiftSwapRequest", b =>
+                {
+                    b.Property<Guid>("SwapRequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ApprovedByStaffId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("HotelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RequesterAllocationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RequesterStaffId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("RespondedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid?>("TargetAllocationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TargetStaffId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("SwapRequestId");
+
+                    b.HasIndex("RequesterAllocationId");
+
+                    b.HasIndex("TargetAllocationId");
+
+                    b.ToTable("ShiftSwapRequests");
+                });
+
             modelBuilder.Entity("HMS.AttendanceService.Domain.Data.AttendanceAnomaly", b =>
                 {
                     b.HasOne("HMS.AttendanceService.Domain.Data.Attendance", "Attendance")
@@ -190,6 +325,35 @@ namespace HMS.AttendanceService.Domain.Migrations
                         .IsRequired();
 
                     b.Navigation("Attendance");
+                });
+
+            modelBuilder.Entity("HMS.AttendanceService.Domain.Data.ShiftAllocation", b =>
+                {
+                    b.HasOne("HMS.AttendanceService.Domain.Data.Shift", "Shift")
+                        .WithMany()
+                        .HasForeignKey("ShiftId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Shift");
+                });
+
+            modelBuilder.Entity("HMS.AttendanceService.Domain.Data.ShiftSwapRequest", b =>
+                {
+                    b.HasOne("HMS.AttendanceService.Domain.Data.ShiftAllocation", "RequesterAllocation")
+                        .WithMany()
+                        .HasForeignKey("RequesterAllocationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HMS.AttendanceService.Domain.Data.ShiftAllocation", "TargetAllocation")
+                        .WithMany()
+                        .HasForeignKey("TargetAllocationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("RequesterAllocation");
+
+                    b.Navigation("TargetAllocation");
                 });
 
             modelBuilder.Entity("HMS.AttendanceService.Domain.Data.Attendance", b =>
