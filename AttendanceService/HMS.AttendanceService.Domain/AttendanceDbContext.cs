@@ -36,6 +36,27 @@ namespace HMS.AttendanceService.Domain
 
             modelBuilder.Entity<LeaveApplication>()
                 .HasIndex(l => new { l.HotelId, l.StaffId, l.StartDate });
+
+            modelBuilder.Entity<ShiftAllocation>(entity =>
+            {
+                entity.HasOne(sa => sa.Shift)
+                      .WithMany()
+                      .HasForeignKey(sa => sa.ShiftId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<ShiftSwapRequest>(entity =>
+            {
+                entity.HasOne(sr => sr.RequesterAllocation)
+                      .WithMany()
+                      .HasForeignKey(sr => sr.RequesterAllocationId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(sr => sr.TargetAllocation)
+                      .WithMany()
+                      .HasForeignKey(sr => sr.TargetAllocationId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }

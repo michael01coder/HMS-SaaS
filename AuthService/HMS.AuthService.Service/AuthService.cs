@@ -1,6 +1,5 @@
 using HMS.AuthService.Common.Enums;
 using HMS.AuthService.Common.Exceptions;
-using HMS.AuthService.Domain;
 using HMS.AuthService.Domain.Data;
 using HMS.AuthService.DTO;
 using HMS.AuthService.Repository.Contracts;
@@ -38,10 +37,6 @@ namespace HMS.AuthService.Service
             _logger = logger;
         }
 
-        // Only these three roles correspond to a real Staff Service record —
-        // HotelOwner keeps a StaffId for claim consistency but isn't "staff"
-        // in the HR sense (no DepartmentId makes sense for an owner), and
-        // SuperAdmin/TenantAdmin have no StaffId at all.
         private static readonly UserRole[] StaffBackedRoles = { UserRole.HR, UserRole.Manager, UserRole.Staff };
 
         public async Task<AuthResponseDto> LoginAsync(LoginDto dto, string ipAddress)
@@ -77,12 +72,6 @@ namespace HMS.AuthService.Service
 
             ValidateScopeForRole(dto.Role, dto.TenantId, dto.HotelId, dto.DepartmentId);
 
-            // Staff Service owns the real Staff record. This StaffId is the
-            // shared key the two services agree on: it goes straight onto
-            // the Identity user below, then gets handed to Staff Service
-            // in the CreateStaffAsync call further down, pinned exactly —
-            // see StaffBackedRoles and the call after role assignment.
-            // SuperAdmin/TenantAdmin never get a StaffId — they aren't staff.
             Guid? assignedStaffId = dto.Role is UserRole.SuperAdmin or UserRole.TenantAdmin
                 ? null
                 : Guid.NewGuid();
@@ -129,13 +118,6 @@ namespace HMS.AuthService.Service
                 throw new BadRequestException($"Failed to assign role: {errors}");
             }
 
-            // HR/Manager/Staff need a real Staff Service record — this is
-            // the fix for the gap flagged earlier: RegisterDto used to
-            // collect these details and silently drop them. There's no
-            // distributed transaction across the two services' databases,
-            // so this is a compensating action: if Staff Service rejects or
-            // is unreachable, the Identity user we just created is deleted
-            // so the two services never end up inconsistent with each other.
             if (StaffBackedRoles.Contains(dto.Role))
             {
                 try
@@ -184,12 +166,10 @@ namespace HMS.AuthService.Service
                 throw new UnauthorizedAccessException("User associated with this token is no longer active.");
             }
 
-            // Revoke old token via Repository
             existingRefreshToken.RevokedAt = DateTime.UtcNow;
             existingRefreshToken.RevokedByIp = ipAddress;
             await _refreshTokenRepository.UpdateAsync(existingRefreshToken);
 
-            // Issue new tokens
             var roles = await _userManager.GetRolesAsync(user);
             string primaryRole = roles.FirstOrDefault() ?? UserRole.Staff.ToString();
 
@@ -201,13 +181,6 @@ namespace HMS.AuthService.Service
             return BuildResponse(user, primaryRole, newRefreshTokenEntity, newAccessToken);
         }
 
-        /// <summary>
-        /// Enforces which of TenantId/HotelId each role actually needs, instead
-        /// of silently accepting whatever the caller sends. This is the fix for
-        /// the role/claim confusion: every other service can now trust that a
-        /// TenantAdmin token always has a TenantId, a HotelOwner/HR/Manager/
-        /// Staff token always has both, and a SuperAdmin token has neither.
-        /// </summary>
         private static void ValidateScopeForRole(UserRole role, Guid? tenantId, Guid? hotelId, int? departmentId)
         {
             switch (role)
@@ -238,11 +211,6 @@ namespace HMS.AuthService.Service
                         throw new BadRequestException($"{role} requires a TenantId.");
                     if (!hotelId.HasValue)
                         throw new BadRequestException($"{role} requires a HotelId.");
-                    // These three (and only these three) get a Staff Service
-                    // record created — Staff.DepartmentId is a required FK
-                    // there, so it has to be required here too, or the
-                    // Staff Service call later would fail with a null value
-                    // StaffService didn't ask for and can't default sensibly.
                     if (!departmentId.HasValue)
                         throw new BadRequestException($"{role} requires a DepartmentId.");
                     break;
