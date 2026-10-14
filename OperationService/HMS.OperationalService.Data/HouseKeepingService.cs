@@ -2,7 +2,6 @@
 using HMS.OperationalService.Domain.Data;
 using HMS.OperationalService.Repository.Contracts;
 using HMS.OperationalService.Service.Contracts;
-using Microsoft.EntityFrameworkCore;
 
 namespace HMS.OperationalService.Data
 {
