@@ -98,11 +98,6 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddHttpContextAccessor();
 
-// Calls StaffService directly (not through the gateway) right after a new
-// HR/Manager/Staff user is created — see AuthService.RegisterAsync and
-// StaffService's InternalStaffController. BaseUrl is non-secret config
-// (appsettings.json); the shared X-Internal-Api-Key is in .env and MUST
-// match StaffService's own INTERNAL_API_KEY exactly.
 var staffServiceBaseUrl = builder.Configuration["StaffService:BaseUrl"]
     ?? throw new InvalidOperationException("StaffService:BaseUrl is missing from appsettings.json.");
 var internalApiKey = builder.Configuration["INTERNAL_API_KEY"]

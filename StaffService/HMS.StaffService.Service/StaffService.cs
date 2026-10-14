@@ -86,9 +86,6 @@ namespace HMS.StaffService.Service
                 Email = dto.Email,
                 Phone = dto.Phone,
                 DepartmentId = dto.DepartmentId,
-                // Placeholders for the HR-only fields Auth's registration form
-                // never asks for — HR fills in the real values afterwards via
-                // the normal PUT /api/staffs/{id} endpoint.
                 EmployeeCode = $"EMP-{dto.StaffId.ToString("N")[..8].ToUpperInvariant()}",
                 Designation = dto.Role,
                 EmploymentType = "Full-Time",
