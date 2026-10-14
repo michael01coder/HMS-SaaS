@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EntityFramework" Version="6.5.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\AuthService\HMS.AuthService.Repository\HMS.AuthService.Repository.csproj" />
+    <ProjectReference Include="..\HMS.OperationalService.Domain\HMS.OperationalService.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

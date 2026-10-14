@@ -1,0 +1,8 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace HMS.GuestService.DTO.GuestDTO
+{
+    public class UpdateGuestDTO : BaseGuestDTO { }
+}

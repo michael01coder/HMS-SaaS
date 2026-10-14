@@ -1,0 +1,6 @@
+@HMS.GuestService.WebApi_HostAddress = http://localhost:5206
+
+GET {{HMS.GuestService.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

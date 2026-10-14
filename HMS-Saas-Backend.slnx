@@ -23,6 +23,22 @@
     <Project Path="TenantService/HMSTenant.Service/HMSTenant.Service.csproj" />
     <Project Path="TenantService/HMSTenantService.Api/HMSTenantService.Api.csproj" />
   </Folder>
+  <Folder Name="/BillingService/">
+    <Project Path="BillingService/HMS.BillingService.Api/HMS.BillingService.Api.csproj" />
+    <Project Path="BillingService/HMS.BillingService.Common/HMS.BillingService.Common.csproj" />
+    <Project Path="BillingService/HMS.BillingService.Domain/HMS.BillingService.Domain.csproj" />
+    <Project Path="BillingService/HMS.BillingService.Repository/HMS.BillingService.Repository.csproj" />
+    <Project Path="BillingService/HMS.BillingService.Service/HMS.BillingService.Service.csproj" />
+    <Project Path="BillingService/HMSBillingService.DTO/HMS.BillingService.DTO.csproj" />
+  </Folder>
+  <Folder Name="/GuestService/">
+    <Project Path="GuestService/HMS.GuestService.Common/HMS.GuestService.Common.csproj" />
+    <Project Path="GuestService/HMS.GuestService.Domain/HMS.GuestService.Domain.csproj" />
+    <Project Path="GuestService/HMS.GuestService.DTO/HMS.GuestService.DTO.csproj" />
+    <Project Path="GuestService/HMS.GuestService.Repository/HMS.GuestService.Repository.csproj" />
+    <Project Path="GuestService/HMS.GuestService.Service/HMS.GuestService.Service.csproj" />
+    <Project Path="GuestService/HMS.GuestService.WebApi/HMS.GuestService.WebApi.csproj" />
+  </Folder>
   <Folder Name="/HotelService/">
     <Project Path="HotelService/HMSHotel.Common/HMSHotel.Common.csproj" />
     <Project Path="HotelService/HMSHotel.Domain/HMSHotel.Domain.csproj" />
@@ -30,6 +46,14 @@
     <Project Path="HotelService/HMSHotel.Repository/HMSHotel.Repository.csproj" />
     <Project Path="HotelService/HMSHotel.Service/HMSHotel.Service.csproj" />
     <Project Path="HotelService/HMSHotelServices.Api/HMSHotelServices.Api.csproj" />
+  </Folder>
+  <Folder Name="/OperationService/">
+    <Project Path="OperationService/HMS.OperationalService.Api/HMS.OperationalService.Api.csproj" />
+    <Project Path="OperationService/HMS.OperationalService.Common/HMS.OperationalService.Common.csproj" />
+    <Project Path="OperationService/HMS.OperationalService.Data/HMS.OperationalService.Service.csproj" />
+    <Project Path="OperationService/HMS.OperationalService.Domain/HMS.OperationalService.Domain.csproj" />
+    <Project Path="OperationService/HMS.OperationalService.DTO/HMS.OperationalService.DTO.csproj" />
+    <Project Path="OperationService/HMS.OperationalService.Repository/HMS.OperationalService.Repository.csproj" />
   </Folder>
   <Folder Name="/RoomManagementService/">
     <Project Path="RoomManagementService/HMSRoomManagement.Common/HMSRoomManagement.Common.csproj" />
