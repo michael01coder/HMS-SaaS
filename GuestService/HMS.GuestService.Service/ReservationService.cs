@@ -1,5 +1,4 @@
-﻿
-using HMS.GuestService.Common.Exceptions;
+﻿using HMS.GuestService.Common.Exceptions;
 using HMS.GuestService.Domain.Data;
 using HMS.GuestService.DTO.ReservationDTO;
 using HMS.GuestService.Repository.Contracts;

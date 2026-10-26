@@ -68,7 +68,7 @@ namespace HMS.AttendanceService.Service
 
             attendance.ClockOutTime = DateTime.UtcNow;
             var duration = attendance.ClockOutTime.Value - attendance.ClockInTime;
-            attendance.TotalHours = (decimal)Math.Round(duration.TotalHours, 2);
+            attendance.TotalHours = duration.Hours + (duration.Minutes / 100.0m);
             attendance.UpdatedAt = DateTime.UtcNow;
 
             if (!string.IsNullOrEmpty(dto.Remarks))

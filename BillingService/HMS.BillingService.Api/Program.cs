@@ -1,3 +1,4 @@
+using DotNetEnv;
 using HMS.BillingService.Domain;
 using HMS.BillingService.Repository;
 using HMS.BillingService.Repository.Contracts;
@@ -10,11 +11,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load shared .env (JWT_SECRET_KEY, DB_CONNECTION_STRING) — see appsettings.json for non-secret Jwt:Issuer/Audience
+Env.Load();
+builder.Configuration.AddEnvironmentVariables();
+
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 // Register Repositories
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
@@ -68,12 +71,6 @@ builder.Services
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
 
 app.UseHttpsRedirection();
 

@@ -123,6 +123,10 @@ namespace HMS.StaffService.Domain.Migrations
                     b.Property<DateTime?>("ProbationEndDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<decimal>("Salary")
                         .HasColumnType("decimal(18,2)");
 

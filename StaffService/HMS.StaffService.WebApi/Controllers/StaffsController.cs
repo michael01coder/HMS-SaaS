@@ -18,21 +18,21 @@ namespace HMS.StaffService.WebApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "HR, Manager, Staff")]
+        [Authorize(Roles = "HR, Manager, Staff, HotelOwner")]
         public async Task<ActionResult<IEnumerable<StaffDto>>> GetAll()
         {
             return Ok(await _staffService.GetAllStaffAsync());
         }
 
         [HttpGet("{id:guid}")]
-        [Authorize(Roles = "HR, Manager, Staff")]
+        [Authorize(Roles = "HR, Manager, Staff, HotelOwner")]
         public async Task<ActionResult<StaffDto>> GetById(Guid id)
         {
             return Ok(await _staffService.GetStaffByIdAsync(id));
         }
 
         [HttpPost]
-        [Authorize(Roles = "HR")]
+        [Authorize(Roles = "HR, HotelOwner")]
         public async Task<ActionResult<StaffDto>> Create([FromBody] CreateStaffDto dto)
         {
             var created = await _staffService.CreateStaffAsync(dto);
@@ -40,7 +40,7 @@ namespace HMS.StaffService.WebApi.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        [Authorize(Roles = "HR")]
+        [Authorize(Roles = "HR, HotelOwner")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateStaffDto dto)
         {
             await _staffService.UpdateStaffAsync(id, dto);
@@ -48,7 +48,7 @@ namespace HMS.StaffService.WebApi.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [Authorize(Roles = "HR")]
+        [Authorize(Roles = "HR, HotelOwner")]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _staffService.DeleteStaffAsync(id);

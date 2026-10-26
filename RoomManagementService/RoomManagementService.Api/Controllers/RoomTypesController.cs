@@ -23,7 +23,7 @@ namespace RoomManagementService.Api.Controllers
             => Ok(await _roomTypeService.GetRoomTypeByIdAsync(id));
 
         [HttpPost]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.Manager}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR}")]
         public async Task<ActionResult<RoomTypeDto>> CreateRoomType([FromBody] CreateRoomTypeDto dto)
         {
             var created = await _roomTypeService.CreateRoomTypeAsync(dto);
@@ -31,7 +31,7 @@ namespace RoomManagementService.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.Manager}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR}")]
         public async Task<IActionResult> UpdateRoomType(int id, [FromBody] UpdateRoomTypeDto dto)
         {
             await _roomTypeService.UpdateRoomTypeAsync(id, dto);
@@ -39,7 +39,7 @@ namespace RoomManagementService.Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR}")]
         public async Task<IActionResult> DeleteRoomType(int id)
         {
             await _roomTypeService.DeleteRoomTypeAsync(id);

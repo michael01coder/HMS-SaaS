@@ -110,7 +110,15 @@ builder.Services.AddHttpClient<IStaffServiceClient, StaffServiceClient>(client =
     client.Timeout = TimeSpan.FromSeconds(10);
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+.AddJsonOptions(options =>
+{
+    // This allows camelCase JSON from the frontend to match PascalCase C# properties
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+
+    // (Optional, if you also want string enums like "Manager" to work automatically)
+    options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+});
 builder.Services.AddOpenApi();
 
 var app = builder.Build();

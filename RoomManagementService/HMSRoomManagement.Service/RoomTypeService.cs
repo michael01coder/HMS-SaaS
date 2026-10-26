@@ -74,7 +74,7 @@ namespace HMSRoomManagement.Service
         {
             var role = _currentUserService.Role;
             if (role is Roles.SuperAdmin or Roles.TenantAdmin) return;
-            if (role is Roles.HotelOwner or Roles.Manager && _currentUserService.HotelId == hotelId) return;
+            if (role is Roles.HotelOwner or Roles.HR && _currentUserService.HotelId == hotelId) return;
 
             throw new ForbiddenException("You don't have permission to manage room types for this hotel.");
         }

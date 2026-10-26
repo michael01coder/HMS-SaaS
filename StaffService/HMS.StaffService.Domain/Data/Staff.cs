@@ -39,6 +39,8 @@ namespace HMS.StaffService.Domain.Data
         [MaxLength(50)]
         public string Designation { get; set; } = string.Empty;
 
+        public string Role { get; set; } = "Staff";
+
         [Required]
         [MaxLength(30)]
         public string EmploymentType { get; set; } = "Full-Time";

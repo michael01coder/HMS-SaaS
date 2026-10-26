@@ -29,7 +29,7 @@ namespace HMSHotelServices.Api.Controllers
 
         // Amenities are platform/tenant-level master data.
         [HttpPost]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin}")]
+        [Authorize(Roles = $"{Roles.HR},{Roles.TenantAdmin}")]
         public async Task<ActionResult<AmenityDto>> CreateAmenity([FromBody] CreateAmenityDto dto)
         {
             var created = await _amenityService.CreateAmenityAsync(dto);
@@ -37,7 +37,7 @@ namespace HMSHotelServices.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin}")]
+        [Authorize(Roles = $"{Roles.HR},{Roles.TenantAdmin}")]
         public async Task<IActionResult> UpdateAmenity(int id, [FromBody] UpdateAmenityDto dto)
         {
             await _amenityService.UpdateAmenityAsync(id, dto);
@@ -45,7 +45,7 @@ namespace HMSHotelServices.Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin}")]
+        [Authorize(Roles = $"{Roles.HR},{Roles.TenantAdmin}")]
         public async Task<IActionResult> DeleteAmenity(int id)
         {
             await _amenityService.DeleteAmenityAsync(id);
