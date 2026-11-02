@@ -15,12 +15,6 @@
 | Billing | BillingService | /api/invoices, /api/payments |
 | Operations | OperationService | /api/housekeeping, /api/maintenance, /api/servicerequests, /api/roominspections, /api/lostandfound, /api/stafftaskassignments |
 
-## Setup
-
-1. Copy `.env.example` to `.env` in each service's API project and fill in the values.
-2. Apply migrations per service (see `docs/` or the project guide for the exact commands and the one-time history-table SQL).
-3. Start Auth first (it seeds the SuperAdmin), then the remaining services and the gateway.
-
 ## Account hierarchy
 
 SuperAdmin creates TenantAdmin and HotelOwner accounts. TenantAdmin creates HotelOwner accounts in its own tenant. HotelOwner creates HR, Manager and Staff. HR creates Manager and Staff. Registration requires a signed-in creator.
