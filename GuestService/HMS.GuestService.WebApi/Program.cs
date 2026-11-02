@@ -1,64 +1,78 @@
+using System.Text;
+using DotNetEnv;
+using HMS.GuestService.Api.Middleware;
+using HMS.GuestService.Common.Security;
 using HMS.GuestService.Domain;
 using HMS.GuestService.Repository;
 using HMS.GuestService.Repository.Contracts;
-using HMS.GuestService.Service.Contracts;
-using Microsoft.EntityFrameworkCore;
-using System.Text;
-using DotNetEnv;
 using HMS.GuestService.Service;
+using HMS.GuestService.Service.Contracts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 builder.Configuration.AddEnvironmentVariables();
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
 builder.Services.AddOpenApi();
 
-// Register open generic repository with two type parameters (TEntity, TId)
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
-
-// Register specific repositories
 builder.Services.AddScoped<IGuestRepository, GuestRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
-builder.Services.AddScoped<IGuestRepository, GuestRepository>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
-
-// Register services
 builder.Services.AddScoped<IGuestService, GuestService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 
-
-
-// Register PostgreSQL DbContext
 var connectionString = builder.Configuration["DB_CONNECTION_STRING"]
     ?? builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("HotelServiceDbContext connection string is missing. Set DB_CONNECTION_STRING in .env.");
+    ?? throw new InvalidOperationException("Database connection string is missing. Set DB_CONNECTION_STRING in .env.");
 
 builder.Services.AddDbContext<BookingDbContext>(options =>
-    options.UseNpgsql(connectionString, npgsql => npgsql.MigrationsHistoryTable("__EFMigrationsHistory_Hotel")));
+    options.UseNpgsql(connectionString, npgsql => npgsql.MigrationsHistoryTable("__EFMigrationsHistory_Guest")));
 
 var jwtSection = builder.Configuration.GetSection("Jwt");
 var jwtSecretKey = builder.Configuration["JWT_SECRET_KEY"]
     ?? jwtSection["SecretKey"]
     ?? throw new InvalidOperationException("JWT_SECRET_KEY is missing. Set it in .env.");
-var signingKey = Encoding.UTF8.GetBytes(jwtSecretKey);
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtSection["Issuer"],
+            ValidateAudience = true,
+            ValidAudience = jwtSection["Audience"],
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey)),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+builder.Services.AddScoped<IAccessGuard, AccessGuard>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

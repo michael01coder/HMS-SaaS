@@ -1,6 +1,5 @@
-﻿using HMS.GuestService.Domain.Data;
+using HMS.GuestService.Domain.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace HMS.GuestService.Domain;
 
@@ -21,11 +20,19 @@ public class BookingDbContext : DbContext
         modelBuilder.Entity<Booking>(entity =>
         {
             entity.HasIndex(b => b.BookingReference).IsUnique();
+            entity.HasIndex(b => new { b.HotelId, b.RoomId, b.CheckInDate });
+            entity.HasIndex(b => new { b.HotelId, b.GuestId });
         });
 
         modelBuilder.Entity<Guest>(entity =>
         {
-            entity.HasIndex(g => g.Email).IsUnique();
+            entity.HasIndex(g => new { g.HotelId, g.Email }).IsUnique();
+        });
+
+        modelBuilder.Entity<Reservation>(entity =>
+        {
+            entity.HasIndex(r => r.ReservationCode).IsUnique();
+            entity.HasIndex(r => new { r.HotelId, r.BookingId });
         });
     }
 }

@@ -1,11 +1,13 @@
-﻿using HMS.BillingService.DTO.PaymentDTO;
+using HMS.BillingService.DTO.PaymentDTO;
 using HMS.BillingService.Service.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.BillingService.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "HotelOwner, HR, Manager, Staff")]
     public class PaymentsController : ControllerBase
     {
         private readonly IPaymentService _paymentService;

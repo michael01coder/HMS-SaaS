@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using HMS.AuthService.Service.Contracts;
 using Microsoft.AspNetCore.Http;
 
@@ -22,6 +22,10 @@ namespace HMS.AuthService.Service
         public string Role => User?.FindFirstValue(ClaimTypes.Role)
                            ?? User?.FindFirstValue("role")
                            ?? string.Empty;
+
+        public Guid TenantId => Guid.TryParse(
+            User?.FindFirstValue("tenantId"),
+            out var id) ? id : Guid.Empty;
 
         public Guid HotelId => Guid.TryParse(
             User?.FindFirstValue("hotelId"),

@@ -1,56 +1,44 @@
-﻿using HMS.OperationalService.Domain.Data;
+using HMS.OperationalService.DTO;
 using HMS.OperationalService.Service.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.OperationalService.Api.Controllers
 {
-   
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "HotelOwner, HR, Manager, Staff")]
     public class HousekeepingController : ControllerBase
     {
-        private readonly IHouseKeepingService _housekeepingService;
+        private readonly IHouseKeepingService _service;
 
-        public HousekeepingController(IHouseKeepingService housekeepingService)
-        {
-            _housekeepingService = housekeepingService;
-        }
+        public HousekeepingController(IHouseKeepingService service) => _service = service;
 
         [HttpGet]
-        public async Task<IActionResult> GetAllTasks()
-        {
-            var tasks = await _housekeepingService.GetAllTasksAsync();
-            return Ok(tasks);
-        }
+        public async Task<IActionResult> GetAll() => Ok(await _service.GetAllAsync());
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetTaskById(int id)
-        {
-            var task = await _housekeepingService.GetTaskByIdAsync(id);
-            return Ok(task);
-        }
+        public async Task<IActionResult> GetById(int id) => Ok(await _service.GetByIdAsync(id));
 
         [HttpPost]
-        public async Task<IActionResult> CreateTask([FromBody] HouseKeepingTask task)
+        public async Task<IActionResult> Create([FromBody] HousekeepingTaskDto dto)
         {
-            var created = await _housekeepingService.CreateTaskAsync(task);
-            return CreatedAtAction(nameof(GetTaskById), new { id = created.HousekeepingTaskId }, created);
+            var created = await _service.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.HousekeepingTaskId }, created);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateTask(int id, [FromBody] HouseKeepingTask task)
+        public async Task<IActionResult> Update(int id, [FromBody] HousekeepingTaskDto dto)
         {
-            if (id != task.HousekeepingTaskId) return BadRequest("Task ID mismatch.");
-            await _housekeepingService.UpdateTaskAsync(task);
+            await _service.UpdateAsync(id, dto);
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteTask(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            await _housekeepingService.DeleteTaskAsync(id);
+            await _service.DeleteAsync(id);
             return NoContent();
         }
     }
 }
-

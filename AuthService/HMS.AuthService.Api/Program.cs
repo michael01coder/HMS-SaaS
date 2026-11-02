@@ -18,7 +18,6 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Load local .env variables into Environment
 Env.Load();
 builder.Configuration.AddEnvironmentVariables();
 
@@ -113,10 +112,8 @@ builder.Services.AddHttpClient<IStaffServiceClient, StaffServiceClient>(client =
 builder.Services.AddControllers()
 .AddJsonOptions(options =>
 {
-    // This allows camelCase JSON from the frontend to match PascalCase C# properties
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
 
-    // (Optional, if you also want string enums like "Manager" to work automatically)
     options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
 });
 builder.Services.AddOpenApi();
@@ -136,5 +133,7 @@ app.UseCors("AllowReact");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+await SuperAdminSeeder.SeedAsync(app.Services);
 
 app.Run();

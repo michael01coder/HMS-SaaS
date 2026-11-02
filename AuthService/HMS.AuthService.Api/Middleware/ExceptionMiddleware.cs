@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using HMS.AuthService.Common.Exceptions;
 
 namespace HMS.AuthService.Api.Middleware
@@ -76,6 +76,9 @@ namespace HMS.AuthService.Api.Middleware
             {
                 NotFoundException => HttpStatusCode.NotFound,
                 BadRequestException => HttpStatusCode.BadRequest,
+                ForbiddenException => HttpStatusCode.Forbidden,
+                UnauthorizedException => HttpStatusCode.Unauthorized,
+                UnauthorizedAccessException => HttpStatusCode.Unauthorized,
                 _ => HttpStatusCode.InternalServerError
             };
 

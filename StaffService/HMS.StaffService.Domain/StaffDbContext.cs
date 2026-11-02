@@ -1,4 +1,4 @@
-﻿using HMS.StaffService.Domain.Data;
+using HMS.StaffService.Domain.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 
@@ -9,6 +9,7 @@ namespace HMS.StaffService.Domain
         public StaffDbContext(DbContextOptions<StaffDbContext> options) : base(options) { }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Designation> Designations { get; set; }
         public DbSet<StaffDocument> StaffDocuments { get; set; }
         public DbSet<StaffNotes> StaffNotes { get; set; }
 
@@ -23,6 +24,10 @@ namespace HMS.StaffService.Domain
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Department>().ToTable("Department");
+
+            modelBuilder.Entity<Designation>()
+                .HasIndex(d => new { d.HotelId, d.DepartmentId, d.DesignationName })
+                .IsUnique();
 
             modelBuilder.Entity<Staff>()
                 .HasOne(s => s.Manager)

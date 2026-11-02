@@ -1,4 +1,4 @@
-﻿using HMS.BillingService.Domain.Data;
+using HMS.BillingService.Domain.Data;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -18,6 +18,7 @@ namespace HMS.BillingService.Domain
             modelBuilder.Entity<Invoice>(entity =>
             {
                 entity.HasIndex(e => e.InvoiceNumber).IsUnique();
+                entity.HasIndex(e => new { e.HotelId, e.BookingId });
                 entity.HasMany(i => i.Payments)
                       .WithOne(p => p.Invoice)
                       .HasForeignKey(p => p.InvoiceId)
@@ -27,6 +28,7 @@ namespace HMS.BillingService.Domain
             modelBuilder.Entity<Payment>(entity =>
             {
                 entity.HasIndex(p => p.TransactionId).IsUnique();
+                entity.HasIndex(p => p.HotelId);
             });
         }
     }

@@ -23,7 +23,7 @@ namespace RoomManagementService.Api.Controllers
             => Ok(await _ratePlanService.GetRatePlanByIdAsync(id));
 
         [HttpPost]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.Manager}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR}")]
         public async Task<ActionResult<RatePlanDto>> CreateRatePlan([FromBody] CreateRatePlanDto dto)
         {
             var created = await _ratePlanService.CreateRatePlanAsync(dto);
@@ -31,7 +31,7 @@ namespace RoomManagementService.Api.Controllers
         }
 
         [HttpPut("{id:int}")]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.Manager}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR}")]
         public async Task<IActionResult> UpdateRatePlan(int id, [FromBody] UpdateRatePlanDto dto)
         {
             await _ratePlanService.UpdateRatePlanAsync(id, dto);
@@ -39,7 +39,7 @@ namespace RoomManagementService.Api.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR}")]
         public async Task<IActionResult> DeleteRatePlan(int id)
         {
             await _ratePlanService.DeleteRatePlanAsync(id);

@@ -1,16 +1,14 @@
-﻿using HMS.OperationalService.Domain.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using HMS.OperationalService.Domain.Data;
+using HMS.OperationalService.DTO;
 
 namespace HMS.OperationalService.Service.Contracts
 {
     public interface IHouseKeepingService
     {
-        Task<IEnumerable<HouseKeepingTask>> GetAllTasksAsync();
-        Task<HouseKeepingTask?> GetTaskByIdAsync(int id);
-        Task<HouseKeepingTask> CreateTaskAsync(HouseKeepingTask task);
-        Task UpdateTaskAsync(HouseKeepingTask task);
-        Task DeleteTaskAsync(int id);
+        Task<IEnumerable<HouseKeepingTask>> GetAllAsync();
+        Task<HouseKeepingTask> GetByIdAsync(int id);
+        Task<HouseKeepingTask> CreateAsync(HousekeepingTaskDto dto);
+        Task UpdateAsync(int id, HousekeepingTaskDto dto);
+        Task DeleteAsync(int id);
     }
 }

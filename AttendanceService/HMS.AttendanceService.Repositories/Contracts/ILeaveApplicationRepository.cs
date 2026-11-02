@@ -1,4 +1,4 @@
-﻿using HMS.AttendanceService.Domain.Data;
+using HMS.AttendanceService.Domain.Data;
 
 namespace HMS.AttendanceService.Repository.Contracts
 {
@@ -8,7 +8,8 @@ namespace HMS.AttendanceService.Repository.Contracts
         Task<List<LeaveApplication>> GetByStaffIdAsync(Guid hotelId, Guid staffId);
         Task<List<LeaveApplication>> GetPendingByHotelIdAsync(Guid hotelId);
 
-        // Add this method
+        Task<bool> HasOverlapAsync(Guid hotelId, Guid staffId, DateOnly start, DateOnly end);
+
         Task<List<LeaveApplication>> GetApprovedLeavesForYearAsync(Guid hotelId, Guid staffId, string leaveTypeName, int year);
     }
 }

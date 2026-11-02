@@ -1,18 +1,14 @@
-﻿using HMS.AuthService.Repository;
 using HMS.OperationalService.Domain.Data;
-using HMS.OperationalService.Repository.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using HMS.OperationalService.DTO;
 
 namespace HMS.OperationalService.Service.Contracts
 {
     public interface IMaintainanceService
     {
-        Task<IEnumerable<MaintainanceRequest>> GetAllRequestsAsync();
-        Task<MaintainanceRequest> GetRequestByIdAsync(int id);
-        Task<MaintainanceRequest> CreateRequestAsync(MaintainanceRequest request);
-        Task UpdateRequestAsync(MaintainanceRequest request);
-        Task DeleteRequestAsync(int id);
+        Task<IEnumerable<MaintainanceRequest>> GetAllAsync();
+        Task<MaintainanceRequest> GetByIdAsync(int id);
+        Task<MaintainanceRequest> CreateAsync(MaintenanceRequestDto dto);
+        Task UpdateAsync(int id, MaintenanceRequestDto dto);
+        Task DeleteAsync(int id);
     }
 }

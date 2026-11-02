@@ -19,14 +19,12 @@ namespace HMSRoomManagement.Service
             _currentUserService = currentUserService;
         }
 
-        // Room types are read broadly — every role that can see a hotel at
-        // all needs to see its room types (front desk, housekeeping, etc.),
-        // so this isn't scoped the way writes are.
         public async Task<IEnumerable<RoomTypeDto>> GetRoomTypesAsync(Guid? hotelId)
         {
             var roomTypes = await _roomTypeRepository.GetAllAsync();
-            if (hotelId.HasValue)
-                roomTypes = roomTypes.Where(rt => rt.HotelId == hotelId.Value).ToList();
+            var scoped = ScopedHotelId(hotelId);
+            if (scoped.HasValue)
+                roomTypes = roomTypes.Where(rt => rt.HotelId == scoped.Value).ToList();
 
             return roomTypes.Select(MapToDto);
         }
@@ -36,6 +34,7 @@ namespace HMSRoomManagement.Service
             var roomType = await _roomTypeRepository.GetAsync(id)
                 ?? throw new NotFoundException($"Room type {id} not found.");
 
+            EnsureCanRead(roomType.HotelId);
             return MapToDto(roomType);
         }
 
@@ -63,13 +62,24 @@ namespace HMSRoomManagement.Service
             await _roomTypeRepository.DeleteAsync(id);
         }
 
-        /// <summary>
-        /// SuperAdmin/TenantAdmin can manage room types at any hotel (this
-        /// service has no TenantId on its own records to check against, so
-        /// TenantAdmin is trusted at this tier — Hotel Service is where
-        /// TenantId-level scoping is enforced). HotelOwner/Manager are
-        /// scoped to their own single hotel.
-        /// </summary>
+
+        private bool IsPlatformScope => _currentUserService.Role is Roles.SuperAdmin or Roles.TenantAdmin;
+
+        private Guid? ScopedHotelId(Guid? requested)
+        {
+            if (IsPlatformScope) return requested;
+            var own = _currentUserService.HotelId ?? throw new ForbiddenException("Missing HotelId claim.");
+            if (requested.HasValue && requested.Value != own)
+                throw new ForbiddenException("You don't have access to this hotel.");
+            return own;
+        }
+
+        private void EnsureCanRead(Guid hotelId)
+        {
+            if (!IsPlatformScope && _currentUserService.HotelId != hotelId)
+                throw new ForbiddenException("You don't have access to this hotel.");
+        }
+
         private void EnsureHotelScope(Guid hotelId)
         {
             var role = _currentUserService.Role;

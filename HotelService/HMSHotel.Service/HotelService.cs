@@ -95,7 +95,7 @@ namespace HMSHotel.Service
             var role = _currentUserService.Role;
             if (role == Roles.SuperAdmin) return;
             if (role == Roles.TenantAdmin && hotel.TenantId == _currentUserService.TenantId) return;
-            if (role == Roles.HotelOwner && hotel.Id == _currentUserService.HotelId) return;
+            if (role is Roles.HotelOwner or Roles.HR && hotel.Id == _currentUserService.HotelId) return;
 
             throw new ForbiddenException("You don't have permission to edit this hotel.");
         }

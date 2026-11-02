@@ -17,9 +17,6 @@ namespace HMSTenant.Service
             _currentUserService = currentUserService;
         }
 
-        // Only SuperAdmin reaches this (gated at the controller) — a
-        // TenantAdmin only ever has the one tenant from their token, fetched
-        // via GetTenantByIdAsync instead.
         public async Task<IEnumerable<TenantDto>> GetAllTenantsAsync()
         {
             var tenants = await _tenantRepository.GetAllAsync();
@@ -49,6 +46,9 @@ namespace HMSTenant.Service
             var exists = await _tenantRepository.GetAsync(id)
                 ?? throw new NotFoundException($"Tenant '{id}' not found.");
 
+            if (_currentUserService.Role != HMSTenant.Common.Constants.Roles.SuperAdmin)
+                dto.IsActive = exists.IsActive;
+
             await _tenantRepository.UpdateAsync(id, dto);
         }
 
@@ -62,12 +62,6 @@ namespace HMSTenant.Service
             await _tenantRepository.DeleteAsync(id);
         }
 
-        /// <summary>
-        /// SuperAdmin can read/update any tenant. A TenantAdmin can only
-        /// read/update their own (the TenantId carried on their own JWT) —
-        /// same scoping pattern StaffService's DepartmentService uses for
-        /// HotelId, just one tier up.
-        /// </summary>
         private void EnsureTenantAdminScope(Guid tenantId)
         {
             var role = _currentUserService.Role;

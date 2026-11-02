@@ -1,4 +1,4 @@
-﻿using HMS.StaffService.Domain.Data;
+using HMS.StaffService.Domain.Data;
 using HMS.StaffService.DTO.Department;
 using HMS.StaffService.DTO.Staff;
 using HMS.StaffService.DTO.StaffDocument;
@@ -11,23 +11,19 @@ namespace HMS.StaffService.WebApi.Configurations
     {
         public static void RegisterMappings(TypeAdapterConfig config)
         {
-            // ----------------------------------------------------
-            // Department
-            // ----------------------------------------------------
             config.NewConfig<Department, DepartmentDto>();
             config.NewConfig<CreateDepartmentDto, Department>();
             config.NewConfig<BaseDepartmentDto, Department>();
 
-            // ----------------------------------------------------
-            // Staff Read Mapping
-            // ----------------------------------------------------
+            config.NewConfig<Designation, DesignationDto>();
+            config.NewConfig<CreateDesignationDto, Designation>();
+            config.NewConfig<BaseDesignationDto, Designation>()
+                .Ignore(dest => dest.DesignationId)
+                .Ignore(dest => dest.HotelId)
+                .Ignore(dest => dest.CreatedAt);
             config.NewConfig<Staff, StaffDto>()
                 .Map(dest => dest.DepartmentName, src => src.Department != null ? src.Department.DepartmentName : null)
                 .Map(dest => dest.ManagerName, src => src.Manager != null ? $"{src.Manager.FirstName} {src.Manager.LastName}".Trim() : null);
-
-            // ----------------------------------------------------
-            // Staff Creation Mapping
-            // ----------------------------------------------------
             config.NewConfig<CreateStaffDto, Staff>()
                 .Ignore(dest => dest.StaffId)
                 .Ignore(dest => dest.CreatedAt)
@@ -36,10 +32,6 @@ namespace HMS.StaffService.WebApi.Configurations
                 .Ignore(dest => dest.Documents)
                 .Ignore(dest => dest.Notes)
                 .Ignore(dest => dest.Subordinates);
-
-            // ----------------------------------------------------
-            // Staff Update Mapping (Partial Update Safety)
-            // ----------------------------------------------------
             config.NewConfig<UpdateStaffDto, Staff>()
                 .IgnoreNullValues(true) // Ignore null properties in incoming DTO
                                         // Prevent Primary Key / Audit Overwrites
@@ -52,10 +44,6 @@ namespace HMS.StaffService.WebApi.Configurations
                 .Ignore(dest => dest.Documents)
                 .Ignore(dest => dest.Notes)
                 .Ignore(dest => dest.Subordinates);
-
-            // ----------------------------------------------------
-            // Staff Document
-            // ----------------------------------------------------
             config.NewConfig<StaffDocument, StaffDocumentDto>();
             config.NewConfig<CreateStaffDocumentDto, StaffDocument>();
             config.NewConfig<UpdateStaffDocumentDto, StaffDocument>()
@@ -63,10 +51,6 @@ namespace HMS.StaffService.WebApi.Configurations
                 .Ignore(dest => dest.DocumentId)
                 .Ignore(dest => dest.StaffId)
                 .Ignore(dest => dest.Staff);
-
-            // ----------------------------------------------------
-            // Staff Notes
-            // ----------------------------------------------------
             config.NewConfig<StaffNotes, StaffNoteDto>();
             config.NewConfig<CreateStaffNoteDto, StaffNotes>();
             config.NewConfig<UpdateStaffNoteDto, StaffNotes>()

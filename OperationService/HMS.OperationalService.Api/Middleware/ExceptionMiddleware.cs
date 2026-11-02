@@ -22,34 +22,27 @@ namespace HMS.OperationalService.Api.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unhandled exception occurred.");
-                await HandleExceptionAsync(context, ex);
+                _logger.LogError(ex, "Unhandled exception");
+                await WriteAsync(context, ex);
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static Task WriteAsync(HttpContext context, Exception exception)
         {
-            context.Response.ContentType = "application/json";
-
-            var statusCode = exception switch
+            var status = exception switch
             {
                 NotFoundException => HttpStatusCode.NotFound,
                 BadRequestException => HttpStatusCode.BadRequest,
                 ForbiddenException => HttpStatusCode.Forbidden,
-                UnauthorizedException => HttpStatusCode.Unauthorized,
-                UnauthorizedAccessException => HttpStatusCode.Unauthorized,
+                UnauthorizedException or UnauthorizedAccessException => HttpStatusCode.Unauthorized,
                 _ => HttpStatusCode.InternalServerError
             };
 
-            context.Response.StatusCode = (int)statusCode;
+            context.Response.StatusCode = (int)status;
+            context.Response.ContentType = "application/json";
 
-            var errorResponse = new
-            {
-                statusCode = context.Response.StatusCode,
-                message = exception.Message
-            };
-
-            return context.Response.WriteAsJsonAsync(errorResponse);
+            var message = status == HttpStatusCode.InternalServerError ? "An unexpected error occurred." : exception.Message;
+            return context.Response.WriteAsJsonAsync(new { statusCode = (int)status, message });
         }
     }
 }

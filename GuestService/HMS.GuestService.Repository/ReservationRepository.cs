@@ -1,4 +1,4 @@
-﻿using HMS.GuestService.Domain;
+using HMS.GuestService.Domain;
 using HMS.GuestService.Domain.Data;
 using HMS.GuestService.Repository.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +21,7 @@ namespace HMS.GuestService.Repository
         {
             return await _dbSet.FirstOrDefaultAsync(r => r.BookingId == bookingId);
         }
-        public async Task<Reservation> GetByCodeAsync(string code)
+        public async Task<Reservation?> GetByCodeAsync(string code)
         {
             return await _dbSet.FirstOrDefaultAsync(c => c.ReservationCode == code);
         }

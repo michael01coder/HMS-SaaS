@@ -1,7 +1,6 @@
 ﻿using HMS.StaffService.Common.Exceptions;
 using HMS.StaffService.Common.Service;
 using HMS.StaffService.Service.Contracts;
-using HMS.StaffService.DTO;
 using HMS.StaffService.DTO.Department;
 using HMS.StaffService.Repository.Contracts;
 using Microsoft.EntityFrameworkCore;

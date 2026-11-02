@@ -1,4 +1,4 @@
-﻿namespace HMS.Common.Exceptions
+﻿namespace HMS.AuthService.Common.Exceptions
 {
     public class UnauthorizedException : Exception
     {

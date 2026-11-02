@@ -44,7 +44,7 @@ namespace HMSHotelServices.Api.Controllers
 
         // PUT: api/Hotels/{id} — SuperAdmin/TenantAdmin/HotelOwner, scoped in Service layer.
         [HttpPut("{id:guid}")]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR}")]
         public async Task<IActionResult> UpdateHotel(Guid id, [FromBody] UpdateHotelDto dto)
         {
             await _hotelService.UpdateHotelAsync(id, dto);

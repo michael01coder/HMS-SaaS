@@ -1,16 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 namespace HMS.BillingService.DTO.InvoiceDTO
 {
     public class CreateInvoiceDTO
     {
-    public Guid BookingId { get; set; }
-    public Guid GuestId { get; set; }
-    public decimal TotalAmount { get; set; }
-    public  decimal TaxAmount { get; set; }
-    public decimal DiscountAmount { get; set; }
-    public DateTime DueDate { get; set; }
+        [Range(1, int.MaxValue)]
+        public int BookingId { get; set; }
+
+        [Required]
+        public Guid GuestId { get; set; }
+
+        [Range(0, double.MaxValue)]
+        public decimal TotalAmount { get; set; }
+
+        [Range(0, double.MaxValue)]
+        public decimal TaxAmount { get; set; }
+
+        [Range(0, double.MaxValue)]
+        public decimal DiscountAmount { get; set; }
+
+        public DateTime DueDate { get; set; }
     }
 }

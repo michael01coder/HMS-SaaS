@@ -14,16 +14,14 @@ namespace HMSHotelServices.Api.Controllers
         private readonly IHotelAmenityService _service;
         public HotelAmenitiesController(IHotelAmenityService service) => _service = service;
 
-        // GET: api/HotelAmenities?hotelId=... — pass hotelId to scope, or omit for all.
         [HttpGet]
         public async Task<ActionResult<IEnumerable<HotelAmenityDto>>> GetLinks([FromQuery] Guid? hotelId)
         {
             return Ok(await _service.GetLinksAsync(hotelId));
         }
 
-        // Junction table — POST to link, DELETE to unlink, no PUT.
         [HttpPost]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR}")]
         public async Task<ActionResult<HotelAmenityDto>> CreateLink([FromBody] HotelAmenityDto dto)
         {
             var created = await _service.LinkAsync(dto);
@@ -31,7 +29,7 @@ namespace HMSHotelServices.Api.Controllers
         }
 
         [HttpDelete("{hotelId:guid}/{amenityId:int}")]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR}")]
         public async Task<IActionResult> DeleteLink(Guid hotelId, int amenityId)
         {
             await _service.UnlinkAsync(hotelId, amenityId);

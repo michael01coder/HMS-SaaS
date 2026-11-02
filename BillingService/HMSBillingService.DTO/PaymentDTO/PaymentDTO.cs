@@ -1,4 +1,4 @@
-﻿using HMS.BillingService.Common.Enums;
+using HMS.BillingService.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,8 +8,9 @@ namespace HMS.BillingService.DTO.PaymentDTO
     public class PaymentDTO
     {
     public Guid Id { get; set; }
+    public Guid HotelId { get; set; }
     public Guid InvoiceId { get; set; }   
-    public string TransactionId { get; set; }
+    public string TransactionId { get; set; } = string.Empty;
     public decimal Amount { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
     public PaymentStatus Status { get; set; }

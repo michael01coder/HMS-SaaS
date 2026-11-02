@@ -19,7 +19,7 @@ namespace RoomManagementService.Api.Controllers
             => Ok(await _service.GetLinksAsync(roomTypeId));
 
         [HttpPost]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.Manager}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR}")]
         public async Task<ActionResult<RoomTypeAmenityDto>> CreateLink([FromBody] RoomTypeAmenityDto dto)
         {
             var created = await _service.LinkAsync(dto);
@@ -27,7 +27,7 @@ namespace RoomManagementService.Api.Controllers
         }
 
         [HttpDelete("{roomTypeId:int}/{amenityId:int}")]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.Manager}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR}")]
         public async Task<IActionResult> DeleteLink(int roomTypeId, int amenityId)
         {
             await _service.UnlinkAsync(roomTypeId, amenityId);

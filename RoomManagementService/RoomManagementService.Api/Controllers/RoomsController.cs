@@ -42,7 +42,7 @@ namespace RoomManagementService.Api.Controllers
         // flipping a room's status. Scope + department check lives in the
         // Service layer — see RoomService.UpdateRoomStatusAsync.
         [HttpPatch("{id:int}/status")]
-        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HR},{Roles.Staff},{Roles.Manager}")]
+        [Authorize(Roles = $"{Roles.SuperAdmin},{Roles.TenantAdmin},{Roles.HotelOwner},{Roles.HR},{Roles.Staff},{Roles.Manager}")]
         public async Task<IActionResult> UpdateRoomStatus(int id, [FromBody] string status)
         {
             await _roomService.UpdateRoomStatusAsync(id, status);

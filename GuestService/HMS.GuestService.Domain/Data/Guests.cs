@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,6 +11,9 @@ namespace HMS.GuestService.Domain.Data
     {
         [Key]
         public Guid GuestId { get; set; }
+
+        [Required]
+        public Guid HotelId { get; set; }
 
         [Required]
         [MaxLength(100)]
@@ -40,7 +43,7 @@ namespace HMS.GuestService.Domain.Data
         public string Country { get; set; } = string.Empty;
 
         [MaxLength(50)]
-        public string IdentificationType { get; set; } = string.Empty; // e.g., Passport, Driver License
+        public string IdentificationType { get; set; } = string.Empty;
 
         [MaxLength(100)]
         public string IdentificationNumber { get; set; } = string.Empty;

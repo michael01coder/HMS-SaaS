@@ -3,15 +3,6 @@ using Microsoft.Extensions.Logging;
 
 namespace HMS.AuthService.Service.External
 {
-    /// <summary>
-    /// Registered via builder.Services.AddHttpClient in Program.cs, which
-    /// sets BaseAddress (from Jwt-sibling config "StaffService:BaseUrl" in
-    /// appsettings.json — not a secret, so it lives there, not in .env) and
-    /// the X-Internal-Api-Key default header (from .env's INTERNAL_API_KEY,
-    /// which must be identical to StaffService's own). This class never
-    /// goes through the gateway — it calls StaffService directly, the same
-    /// way the gateway's own cluster destinations do.
-    /// </summary>
     public class StaffServiceClient : IStaffServiceClient
     {
         private readonly HttpClient _httpClient;
@@ -23,7 +14,7 @@ namespace HMS.AuthService.Service.External
             _logger = logger;
         }
 
-        public async Task CreateStaffAsync(StaffCreationRequest request, CancellationToken cancellationToken = default)
+        public async Task<string?> CreateStaffAsync(StaffCreationRequest request, CancellationToken cancellationToken = default)
         {
             HttpResponseMessage response;
             try
@@ -47,6 +38,14 @@ namespace HMS.AuthService.Service.External
                 _logger.LogError("StaffService rejected staff creation for StaffId {StaffId}: {Status} {Body}", request.StaffId, response.StatusCode, body);
                 throw new StaffServiceCallException($"Staff Service rejected the new staff record ({(int)response.StatusCode}): {body}");
             }
+
+            var created = await response.Content.ReadFromJsonAsync<CreatedStaff>(cancellationToken: cancellationToken);
+            return created?.DepartmentName;
+        }
+
+        private sealed class CreatedStaff
+        {
+            public string? DepartmentName { get; set; }
         }
     }
 }

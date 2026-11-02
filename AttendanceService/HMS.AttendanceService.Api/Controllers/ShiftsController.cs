@@ -1,4 +1,4 @@
-﻿using HMS.AttendanceService.DTO.Shift;
+using HMS.AttendanceService.DTO.Shift;
 using HMS.AttendanceService.Service.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +18,7 @@ namespace HMS.AttendanceService.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "HR, Manager")]
+        [Authorize(Roles = "HR")]
         public async Task<ActionResult<ShiftDto>> CreateShift([FromBody] CreateShiftDto dto)
         {
             return Ok(await _shiftService.CreateShiftAsync(dto));
@@ -32,7 +32,7 @@ namespace HMS.AttendanceService.Api.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        [Authorize(Roles = "HR, Manager")]
+        [Authorize(Roles = "HR")]
         public async Task<IActionResult> UpdateShift(Guid id, [FromBody] UpdateShiftDto dto)
         {
             await _shiftService.UpdateShiftAsync(id, dto);

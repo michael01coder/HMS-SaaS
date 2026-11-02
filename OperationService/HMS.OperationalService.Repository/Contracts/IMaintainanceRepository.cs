@@ -1,12 +1,6 @@
-﻿using HMS.OperationalService.Domain.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using HMS.OperationalService.Domain.Data;
 
 namespace HMS.OperationalService.Repository.Contracts
 {
-    public interface IMaintainanceRepository : IGenericRepository<MaintainanceRequest, Guid> 
-    {
-        Task<IEnumerable<MaintainanceRequest>> GetRequestsByTechnicianAsync(Guid technicianId);
-    }
+    public interface IMaintainanceRepository : IGenericRepository<MaintainanceRequest, int> { }
 }

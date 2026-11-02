@@ -1,4 +1,4 @@
-﻿using HMS.AttendanceService.Domain;
+using HMS.AttendanceService.Domain;
 using HMS.AttendanceService.Domain.Data;
 using HMS.AttendanceService.Repository.Contracts;
 using MapsterMapper;
@@ -21,6 +21,7 @@ namespace HMS.AttendanceService.Repository
         public async Task<List<AttendanceAnomaly>> GetByStaffIdAsync(Guid staffId)
         {
             return await _dbSet.AsNoTracking()
+                .Include(a => a.Attendance)
                 .Where(a => a.StaffId == staffId)
                 .OrderByDescending(a => a.ReportedAt)
                 .ToListAsync();

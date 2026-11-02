@@ -1,7 +1,5 @@
-﻿using HMS.OperationalService.Domain.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using HMS.OperationalService.Domain.Data;
+using HMS.OperationalService.DTO;
 
 namespace HMS.OperationalService.Service.Contracts
 {
@@ -9,7 +7,7 @@ namespace HMS.OperationalService.Service.Contracts
     {
         Task<IEnumerable<LostAndFound>> GetAllAsync();
         Task<LostAndFound> GetByIdAsync(int id);
-        Task<LostAndFound> CreateAsync(LostAndFound item);
+        Task<LostAndFound> CreateAsync(LostAndFoundDto dto);
         Task ClaimItemAsync(int id, Guid guestId);
         Task DeleteAsync(int id);
     }

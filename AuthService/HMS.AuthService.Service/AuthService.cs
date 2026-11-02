@@ -19,6 +19,7 @@ namespace HMS.AuthService.Service
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IStaffServiceClient _staffServiceClient;
+        private readonly ICurrentUserService _currentUser;
         private readonly ILogger<AuthService> _logger;
 
         public AuthService(
@@ -27,6 +28,7 @@ namespace HMS.AuthService.Service
             RoleManager<IdentityRole<Guid>> roleManager,
             IJwtTokenService jwtTokenService,
             IStaffServiceClient staffServiceClient,
+            ICurrentUserService currentUser,
             ILogger<AuthService> logger)
         {
             _refreshTokenRepository = refreshTokenRepository;
@@ -34,6 +36,7 @@ namespace HMS.AuthService.Service
             _roleManager = roleManager;
             _jwtTokenService = jwtTokenService;
             _staffServiceClient = staffServiceClient;
+            _currentUser = currentUser;
             _logger = logger;
         }
 
@@ -70,6 +73,7 @@ namespace HMS.AuthService.Service
         {
             _logger.LogInformation("Registering auth identity user: {Email}", dto.Email);
 
+            EnforceRegistrationPolicy(dto);
             ValidateScopeForRole(dto.Role, dto.TenantId, dto.HotelId, dto.DepartmentId);
 
             Guid? assignedStaffId = dto.Role is UserRole.SuperAdmin or UserRole.TenantAdmin
@@ -122,7 +126,7 @@ namespace HMS.AuthService.Service
             {
                 try
                 {
-                    await _staffServiceClient.CreateStaffAsync(new StaffCreationRequest
+                    var departmentName = await _staffServiceClient.CreateStaffAsync(new StaffCreationRequest
                     {
                         StaffId = user.StaffId!.Value,
                         HotelId = user.HotelId!.Value,
@@ -133,6 +137,9 @@ namespace HMS.AuthService.Service
                         DepartmentId = dto.DepartmentId!.Value,
                         Role = roleName
                     });
+
+                    user.DepartmentName = departmentName;
+                    await _userManager.UpdateAsync(user);
                 }
                 catch (StaffServiceCallException ex)
                 {
@@ -142,12 +149,92 @@ namespace HMS.AuthService.Service
                 }
             }
 
-            string accessToken = _jwtTokenService.GenerateAccessToken(user, roleName);
-            var refreshTokenEntity = GenerateRefreshTokenEntity(user.Id, ipAddress);
+            return new AuthResponseDto
+            {
+                Email = user.Email!,
+                Role = roleName,
+                StaffId = user.StaffId ?? Guid.Empty,
+                TenantId = user.TenantId,
+                HotelId = user.HotelId
+            };
+        }
 
-            await _refreshTokenRepository.AddAsync(refreshTokenEntity);
+        public async Task LogoutAsync(RefreshTokenRequestDto dto, string ipAddress)
+        {
+            var token = await _refreshTokenRepository.Query()
+                .FirstOrDefaultAsync(r => r.Token == dto.RefreshToken && r.UserId == _currentUser.UserId);
+            if (token == null || !token.IsActive) return;
 
-            return BuildResponse(user, roleName, refreshTokenEntity, accessToken);
+            token.RevokedAt = DateTime.UtcNow;
+            token.RevokedByIp = ipAddress;
+            await _refreshTokenRepository.UpdateAsync(token);
+        }
+
+        public async Task ChangePasswordAsync(ChangePasswordDto dto)
+        {
+            var user = await _userManager.FindByIdAsync(_currentUser.UserId.ToString())
+                ?? throw new NotFoundException("User not found.");
+
+            var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                throw new BadRequestException($"Password change failed: {errors}");
+            }
+
+            await RevokeAllTokensAsync(user.Id);
+        }
+
+        public async Task SetStaffActiveAsync(Guid staffId, bool isActive)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.StaffId == staffId)
+                ?? throw new NotFoundException("No login exists for this staff member.");
+
+            user.IsActive = isActive;
+            await _userManager.UpdateAsync(user);
+
+            if (!isActive) await RevokeAllTokensAsync(user.Id);
+        }
+
+        public async Task UpdateStaffDepartmentAsync(Guid staffId, string? departmentName)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.StaffId == staffId);
+            if (user == null) return;
+
+            user.DepartmentName = departmentName;
+            await _userManager.UpdateAsync(user);
+        }
+
+        private async Task RevokeAllTokensAsync(Guid userId)
+        {
+            var tokens = await _refreshTokenRepository.Query()
+                .Where(r => r.UserId == userId && r.RevokedAt == null)
+                .ToListAsync();
+
+            foreach (var t in tokens)
+            {
+                t.RevokedAt = DateTime.UtcNow;
+                await _refreshTokenRepository.UpdateAsync(t);
+            }
+        }
+
+        private void EnforceRegistrationPolicy(RegisterDto dto)
+        {
+            var caller = _currentUser.Role;
+            var sameTenant = _currentUser.TenantId != Guid.Empty && dto.TenantId == _currentUser.TenantId;
+            var sameHotel = sameTenant && _currentUser.HotelId != Guid.Empty && dto.HotelId == _currentUser.HotelId;
+
+            var allowed = caller switch
+            {
+                nameof(UserRole.SuperAdmin) => dto.Role is UserRole.TenantAdmin or UserRole.HotelOwner,
+                nameof(UserRole.TenantAdmin) => dto.Role == UserRole.HotelOwner && sameTenant,
+                nameof(UserRole.HotelOwner) => dto.Role is UserRole.HR or UserRole.Manager or UserRole.Staff && sameHotel,
+                nameof(UserRole.HR) => dto.Role is UserRole.Manager or UserRole.Staff && sameHotel,
+                _ => false
+            };
+
+            if (!allowed)
+                throw new ForbiddenException($"A {(string.IsNullOrEmpty(caller) ? "anonymous user" : caller)} cannot create a {dto.Role} account in this scope.");
         }
 
         public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto dto, string ipAddress)

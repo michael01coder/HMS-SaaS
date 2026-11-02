@@ -1,4 +1,4 @@
-﻿using HMS.BillingService.Common.Enums;
+using HMS.BillingService.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +12,9 @@ namespace HMS.BillingService.Domain.Data
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
+
+        [Required]
+        public Guid HotelId { get; set; }
 
         [Required]
         public Guid InvoiceId { get; set; }

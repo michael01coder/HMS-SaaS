@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HMS.GuestService.Domain.Data;
@@ -10,10 +10,13 @@ public class Reservation
     public int ReservationId { get; set; }
 
     [Required]
-    public int BookingId { get; set; } // Internal reference ID within same microservice
+    public Guid HotelId { get; set; }
 
     [Required]
-    public Guid GuestId { get; set; }   // Reference ID only - No Navigation Property
+    public int BookingId { get; set; } 
+
+    [Required]
+    public Guid GuestId { get; set; }   
 
     [Required]
     public DateTime ReservationDate { get; set; } = DateTime.UtcNow;

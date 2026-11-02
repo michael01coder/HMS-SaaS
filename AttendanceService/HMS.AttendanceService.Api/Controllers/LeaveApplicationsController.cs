@@ -1,4 +1,4 @@
-﻿using HMS.AttendanceService.DTO.Leave;
+using HMS.AttendanceService.DTO.Leave;
 using HMS.AttendanceService.Service.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,14 +44,14 @@ namespace HMS.AttendanceService.Api.Controllers
         }
 
         [HttpGet("hotel")]
-        [Authorize(Roles = "HR, Manager")]
+        [Authorize(Roles = "HR, Manager, HotelOwner")]
         public async Task<ActionResult<IEnumerable<LeaveApplicationDto>>> GetHotelLeaves()
         {
             return Ok(await _leaveService.GetByHotelAsync());
         }
 
         [HttpGet("pending")]
-        [Authorize(Roles = "HR, Manager")]
+        [Authorize(Roles = "HR, Manager, HotelOwner")]
         public async Task<ActionResult<IEnumerable<LeaveApplicationDto>>> GetPendingLeaves()
         {
             return Ok(await _leaveService.GetPendingForHotelAsync());
@@ -65,7 +65,7 @@ namespace HMS.AttendanceService.Api.Controllers
         }
 
         [HttpPut("{id:guid}/status")]
-        [Authorize(Roles = "HR, Manager")]
+        [Authorize(Roles = "HR, Manager, HotelOwner")]
         public async Task<ActionResult<LeaveApplicationDto>> UpdateStatus(Guid id, [FromBody] UpdateLeaveStatusDto dto)
         {
             return Ok(await _leaveService.UpdateStatusAsync(id, dto));

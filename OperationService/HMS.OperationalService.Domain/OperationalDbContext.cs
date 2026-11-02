@@ -1,9 +1,5 @@
-﻿using HMS.OperationalService.Domain.Data;
+using HMS.OperationalService.Domain.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Reflection.Emit;
-using System.Text;
 
 namespace HMS.OperationalService.Domain
 {
@@ -22,12 +18,41 @@ namespace HMS.OperationalService.Domain
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<HouseKeepingTask>().HasKey(x => x.HousekeepingTaskId);
-            modelBuilder.Entity<MaintainanceRequest>().HasKey(x => x.MaintainanceRequestId);
-            modelBuilder.Entity<ServiceRequest>().HasKey(x => x.ServiceRequestId);
-            modelBuilder.Entity<RoomInspection>().HasKey(x => x.InspectionId);
-            modelBuilder.Entity<LostAndFound>().HasKey(x => x.LostAndFoundId);
-            modelBuilder.Entity<StaffTaskAssignment>().HasKey(x => x.AssignmentId);
+            modelBuilder.Entity<HouseKeepingTask>(e =>
+            {
+                e.HasKey(x => x.HousekeepingTaskId);
+                e.HasIndex(x => new { x.HotelId, x.Status });
+                e.HasIndex(x => x.TaskCode).IsUnique();
+            });
+            modelBuilder.Entity<MaintainanceRequest>(e =>
+            {
+                e.HasKey(x => x.MaintenanceRequestId);
+                e.HasIndex(x => new { x.HotelId, x.Status });
+                e.HasIndex(x => x.RequestCode).IsUnique();
+            });
+            modelBuilder.Entity<ServiceRequest>(e =>
+            {
+                e.HasKey(x => x.ServiceRequestId);
+                e.HasIndex(x => new { x.HotelId, x.Status });
+                e.HasIndex(x => x.RequestCode).IsUnique();
+            });
+            modelBuilder.Entity<RoomInspection>(e =>
+            {
+                e.HasKey(x => x.InspectionId);
+                e.HasIndex(x => x.HotelId);
+                e.HasIndex(x => x.InspectionCode).IsUnique();
+            });
+            modelBuilder.Entity<LostAndFound>(e =>
+            {
+                e.HasKey(x => x.LostAndFoundId);
+                e.HasIndex(x => x.HotelId);
+                e.HasIndex(x => x.ItemCode).IsUnique();
+            });
+            modelBuilder.Entity<StaffTaskAssignment>(e =>
+            {
+                e.HasKey(x => x.AssignmentId);
+                e.HasIndex(x => new { x.HotelId, x.StaffId });
+            });
         }
     }
 }

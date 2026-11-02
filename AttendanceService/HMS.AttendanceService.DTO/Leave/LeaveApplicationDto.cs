@@ -1,10 +1,12 @@
-﻿namespace HMS.AttendanceService.DTO.Leave
+namespace HMS.AttendanceService.DTO.Leave
 {
     public class LeaveApplicationDto : BaseLeaveApplicationDto
     {
         public Guid LeaveApplicationId { get; set; }
         public Guid TenantId { get; set; }
         public Guid HotelId { get; set; }
+        public string RequesterRole { get; set; } = string.Empty;
+        public string? Department { get; set; }
         public string Status { get; set; } = "Pending";
         public DateOnly AppliedOn { get; set; }
         public Guid? ApprovedByStaffId { get; set; }

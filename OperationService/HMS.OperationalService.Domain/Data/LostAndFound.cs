@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using HMS.OperationalService.Common.Enums;
 
 namespace HMS.OperationalService.Domain.Data
 {
     public class LostAndFound
     {
         public int LostAndFoundId { get; set; }
+        public Guid HotelId { get; set; }
         public string ItemCode { get; set; } = string.Empty;
         public int RoomId { get; set; }
         public string ItemName { get; set; } = string.Empty;
@@ -14,7 +13,7 @@ namespace HMS.OperationalService.Domain.Data
         public Guid FoundByStaffId { get; set; }
         public DateTime FoundDate { get; set; }
         public string StorageLocation { get; set; } = string.Empty;
-        public bool IsClaimed { get; set; } = false;
+        public bool IsClaimed { get; set; }
         public Guid? ClaimedByGuestId { get; set; }
         public DateTime? ClaimedDate { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,6 +11,9 @@ namespace HMS.GuestService.Domain.Data
     {
         [Key]
         public int BookingId { get; set; }
+
+        [Required]
+        public Guid HotelId { get; set; }
 
         [Required]
         public string BookingReference { get; set; } = string.Empty;
@@ -33,11 +36,11 @@ namespace HMS.GuestService.Domain.Data
 
         [Required]
         [MaxLength(50)]
-        public string Status { get; set; } = "Pending"; // e.g., Pending, Confirmed, Cancelled, Completed
+        public string Status { get; set; } = "Pending";
 
         
         [MaxLength(50)]
-        public string? PaymentStatus { get; set; } = "Partially"; // e.g., Partially, Paid, Not Paid
+        public string? PaymentStatus { get; set; } = "Pending";
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

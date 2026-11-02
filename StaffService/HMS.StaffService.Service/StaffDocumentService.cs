@@ -1,4 +1,4 @@
-﻿using HMS.StaffService.Common.Exceptions;
+using HMS.StaffService.Common.Exceptions;
 using HMS.StaffService.Common.Service;
 using HMS.StaffService.DTO.StaffDocument;
 using HMS.StaffService.Repository.Contracts;
@@ -39,8 +39,16 @@ namespace HMS.StaffService.Service
                 .ToListAsync();
         }
 
+        private void EnsureCanRead(Guid ownerStaffId)
+        {
+            var role = _currentUserService.Role;
+            if ((role == "Staff" || role == "Manager") && ownerStaffId != _currentUserService.StaffId)
+                throw new ForbiddenException("You can only view your own documents.");
+        }
+
         public async Task<IEnumerable<StaffDocumentDto>> GetByStaffIdAsync(Guid staffId)
         {
+            EnsureCanRead(staffId);
             var staff = await _staffRepository.GetAsync(staffId)
                 ?? throw new NotFoundException($"Staff '{staffId}' not found.");
 
@@ -60,6 +68,7 @@ namespace HMS.StaffService.Service
             if (staff?.HotelId != _currentUserService.HotelId)
                 throw new ForbiddenException("Access denied.");
 
+            EnsureCanRead(doc.StaffId);
             return _mapper.Map<StaffDocumentDto>(doc);
         }
 

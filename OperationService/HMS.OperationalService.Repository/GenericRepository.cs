@@ -1,11 +1,7 @@
-﻿using HMS.OperationalService.Domain;
+using System.Linq.Expressions;
+using HMS.OperationalService.Domain;
 using HMS.OperationalService.Repository.Contracts;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HMS.OperationalService.Repository
 {
@@ -13,41 +9,26 @@ namespace HMS.OperationalService.Repository
     {
         protected readonly OperationalDbContext _context;
         protected readonly DbSet<TEntity> _dbSet;
-        protected readonly IMapper _mapper;
 
-        public GenericRepository(OperationalDbContext context, IMapper mapper = null)
+        public GenericRepository(OperationalDbContext context)
         {
             _context = context;
             _dbSet = context.Set<TEntity>();
-            _mapper = mapper;
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync() => await _dbSet.ToListAsync();
 
-        public async Task<TEntity?> GetByIdAsync(object id)
-        {
-            if (id == null) return null;
-            return await _dbSet.FindAsync(id);
-        }
+        public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate) =>
+            await _dbSet.Where(predicate).ToListAsync();
 
-        public async Task AddAsync(TEntity entity)
-        {
-            await _dbSet.AddAsync(entity);
-        }
+        public async Task<TEntity?> GetByIdAsync(object id) => await _dbSet.FindAsync(id);
 
-        public void Update(TEntity entity)
-        {
-            _dbSet.Update(entity);
-        }
+        public async Task AddAsync(TEntity entity) => await _dbSet.AddAsync(entity);
 
-        public void Delete(TEntity entity)
-        {
-            _dbSet.Remove(entity);
-        }
+        public void Update(TEntity entity) => _dbSet.Update(entity);
 
-        public async Task<int> SaveChangesAsync()
-        {
-            return await _context.SaveChangesAsync();
-        }
+        public void Delete(TEntity entity) => _dbSet.Remove(entity);
+
+        public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
     }
 }

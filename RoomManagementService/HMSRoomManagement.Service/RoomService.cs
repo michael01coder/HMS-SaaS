@@ -22,7 +22,8 @@ namespace HMSRoomManagement.Service
         public async Task<IEnumerable<RoomDto>> GetRoomsAsync(Guid? hotelId, int? roomTypeId)
         {
             var rooms = await _roomRepository.GetAllAsync();
-            if (hotelId.HasValue) rooms = rooms.Where(r => r.HotelId == hotelId.Value).ToList();
+            var scoped = ScopedHotelId(hotelId);
+            if (scoped.HasValue) rooms = rooms.Where(r => r.HotelId == scoped.Value).ToList();
             if (roomTypeId.HasValue) rooms = rooms.Where(r => r.RoomTypeId == roomTypeId.Value).ToList();
 
             return rooms.Select(MapToDto);
@@ -33,6 +34,7 @@ namespace HMSRoomManagement.Service
             var room = await _roomRepository.GetAsync(id)
                 ?? throw new NotFoundException($"Room {id} not found.");
 
+            EnsureCanRead(room.HotelId);
             return MapToDto(room);
         }
 
@@ -51,13 +53,6 @@ namespace HMSRoomManagement.Service
             await _roomRepository.UpdateAsync(id, dto);
         }
 
-        /// <summary>
-        /// The one example of "FrontDeskStaff" in this whole solution: it's
-        /// not a role, it's a Staff-role user whose Department is "Front
-        /// Desk" (or any Manager at the hotel). Compare this to
-        /// EnsureManagementScope below, which is purely role + hotel based —
-        /// this method is role + hotel + department.
-        /// </summary>
         public async Task UpdateRoomStatusAsync(int id, string status)
         {
             var room = await _roomRepository.GetAsync(id)
@@ -69,11 +64,11 @@ namespace HMSRoomManagement.Service
             bool allowed =
                 role is Roles.SuperAdmin or Roles.TenantAdmin ||
                 (role == Roles.Manager && sameHotel) ||
-                (role == Roles.Staff && sameHotel &&
-                    string.Equals(_currentUserService.Department, "Front Desk", StringComparison.OrdinalIgnoreCase));
+                (role is Roles.HR or Roles.HotelOwner && sameHotel) ||
+                (role == Roles.Staff && sameHotel && IsRoomDesk(_currentUserService.Department));
 
             if (!allowed)
-                throw new ForbiddenException("Only hotel management or Front Desk staff can update room status.");
+                throw new ForbiddenException("Only hotel management, Front Desk or Housekeeping staff can update room status.");
 
             await _roomRepository.UpdateAsync(id, new { Status = status });
         }
@@ -86,6 +81,29 @@ namespace HMSRoomManagement.Service
             EnsureManagementScope(room.HotelId);
             await _roomRepository.DeleteAsync(id);
         }
+
+
+        private bool IsPlatformScope => _currentUserService.Role is Roles.SuperAdmin or Roles.TenantAdmin;
+
+        private Guid? ScopedHotelId(Guid? requested)
+        {
+            if (IsPlatformScope) return requested;
+            var own = _currentUserService.HotelId ?? throw new ForbiddenException("Missing HotelId claim.");
+            if (requested.HasValue && requested.Value != own)
+                throw new ForbiddenException("You don't have access to this hotel.");
+            return own;
+        }
+
+        private void EnsureCanRead(Guid hotelId)
+        {
+            if (!IsPlatformScope && _currentUserService.HotelId != hotelId)
+                throw new ForbiddenException("You don't have access to this hotel.");
+        }
+
+        private static bool IsRoomDesk(string? department) =>
+            department != null &&
+            (department.Contains("front", StringComparison.OrdinalIgnoreCase)
+             || department.Contains("housekeep", StringComparison.OrdinalIgnoreCase));
 
         private void EnsureManagementScope(Guid hotelId)
         {

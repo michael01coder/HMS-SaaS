@@ -6,6 +6,7 @@ using HMS.StaffService.Repository;
 using HMS.StaffService.Repository.Contracts;
 using HMS.StaffService.Service;
 using HMS.StaffService.Service.Contracts;
+using HMS.StaffService.Service.External;
 using HMS.StaffService.WebApi.Configurations;
 using HMS.StaffService.WebApi.Middleware;
 using Mapster;
@@ -33,7 +34,6 @@ var connectionString = builder.Configuration["DB_CONNECTION_STRING"]
 builder.Services.AddDbContext<StaffDbContext>(options =>
 {
     options.UseNpgsql(connectionString, npgsql => npgsql.MigrationsHistoryTable("__EFMigrationsHistory_Staff"));
-    options.EnableSensitiveDataLogging(); 
 });
 builder.Services.AddCors(options =>
 {
@@ -87,12 +87,26 @@ builder.Services.AddAuthentication(options =>
 // Repositories 
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IDesignationRepository, DesignationRepository>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IStaffDocumentRepository, StaffDocumentRepository>();
 builder.Services.AddScoped<IStaffNotesRepository, StaffNotesRepository>();
 
 // Services
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IDesignationService, DesignationService>();
+
+var authServiceBaseUrl = builder.Configuration["AuthService:BaseUrl"]
+    ?? throw new InvalidOperationException("AuthService:BaseUrl is missing from appsettings.json.");
+var internalApiKey = builder.Configuration["INTERNAL_API_KEY"]
+    ?? throw new InvalidOperationException("INTERNAL_API_KEY is missing. Set it in .env.");
+
+builder.Services.AddHttpClient<IAuthServiceClient, AuthServiceClient>(client =>
+{
+    client.BaseAddress = new Uri(authServiceBaseUrl.TrimEnd('/') + "/");
+    client.DefaultRequestHeaders.Add("X-Internal-Api-Key", internalApiKey);
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IStaffDocumentService, StaffDocumentService>();
 builder.Services.AddScoped<IStaffNotesService, StaffNotesService>();
@@ -103,9 +117,6 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Was defined but never registered — every NotFoundException/
-// ForbiddenException thrown in the Service layer was propagating as a raw
-// unhandled exception instead of the intended JSON error response.
 app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())

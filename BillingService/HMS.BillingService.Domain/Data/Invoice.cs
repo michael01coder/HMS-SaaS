@@ -1,4 +1,4 @@
-﻿using HMS.BillingService.Common.Enums;
+using HMS.BillingService.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +14,10 @@ namespace HMS.BillingService.Domain.Data
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        public Guid BookingId { get; set; }
+        public Guid HotelId { get; set; }
+
+        [Required]
+        public int BookingId { get; set; }
 
         [Required]
         public Guid GuestId { get; set; }
@@ -39,7 +42,7 @@ namespace HMS.BillingService.Domain.Data
 
         public DateTime DueDate { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }

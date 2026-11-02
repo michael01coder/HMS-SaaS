@@ -30,6 +30,15 @@ namespace HMSRoomManagement.Service
                 ? await _repository.GetByRoomTypeAsync(roomTypeId.Value)
                 : await _repository.GetAllAsync();
 
+            if (_currentUserService.Role is not (Roles.SuperAdmin or Roles.TenantAdmin))
+            {
+                var ownTypeIds = (await _roomTypeRepository.GetAllAsync())
+                    .Where(rt => rt.HotelId == _currentUserService.HotelId)
+                    .Select(rt => rt.Id)
+                    .ToHashSet();
+                links = links.Where(l => ownTypeIds.Contains(l.RoomTypeId)).ToList();
+            }
+
             return links.Select(l => new RoomTypeAmenityDto { RoomTypeId = l.RoomTypeId, AmenityId = l.AmenityId });
         }
 
@@ -67,7 +76,7 @@ namespace HMSRoomManagement.Service
             var roomType = await _roomTypeRepository.GetAsync(roomTypeId)
                 ?? throw new NotFoundException($"Room type {roomTypeId} not found.");
 
-            if (role is Roles.HotelOwner or Roles.Manager && _currentUserService.HotelId == roomType.HotelId) return;
+            if (role is Roles.HotelOwner or Roles.HR && _currentUserService.HotelId == roomType.HotelId) return;
 
             throw new ForbiddenException("You don't have permission to manage amenities for this room type.");
         }

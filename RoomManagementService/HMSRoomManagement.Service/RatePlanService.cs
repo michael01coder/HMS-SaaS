@@ -34,6 +34,15 @@ namespace HMSRoomManagement.Service
             if (roomTypeId.HasValue)
                 ratePlans = ratePlans.Where(rp => rp.RoomTypeId == roomTypeId.Value).ToList();
 
+            if (!IsPlatformScope)
+            {
+                var ownTypeIds = (await _roomTypeRepository.GetAllAsync())
+                    .Where(rt => rt.HotelId == _currentUserService.HotelId)
+                    .Select(rt => rt.Id)
+                    .ToHashSet();
+                ratePlans = ratePlans.Where(rp => ownTypeIds.Contains(rp.RoomTypeId)).ToList();
+            }
+
             var result = new List<RatePlanDto>();
             foreach (var rp in ratePlans)
                 result.Add(await ComposeAsync(rp));
@@ -46,6 +55,7 @@ namespace HMSRoomManagement.Service
             var rp = await _ratePlanRepository.GetAsync(id)
                 ?? throw new NotFoundException($"Rate plan {id} not found.");
 
+            await EnsureReadViaRoomTypeAsync(rp.RoomTypeId);
             return await ComposeAsync(rp);
         }
 
@@ -143,8 +153,17 @@ namespace HMSRoomManagement.Service
             };
         }
 
-        // RatePlan doesn't carry HotelId directly (it hangs off RoomTypeId),
-        // so scoping resolves the owning hotel through RoomType first.
+        private bool IsPlatformScope => _currentUserService.Role is Roles.SuperAdmin or Roles.TenantAdmin;
+
+        private async Task EnsureReadViaRoomTypeAsync(int roomTypeId)
+        {
+            if (IsPlatformScope) return;
+            var roomType = await _roomTypeRepository.GetAsync(roomTypeId)
+                ?? throw new NotFoundException($"Room type {roomTypeId} not found.");
+            if (roomType.HotelId != _currentUserService.HotelId)
+                throw new ForbiddenException("You don't have access to this hotel.");
+        }
+
         private async Task EnsureHotelScopeViaRoomTypeAsync(int roomTypeId)
         {
             var role = _currentUserService.Role;
@@ -153,7 +172,7 @@ namespace HMSRoomManagement.Service
             var roomType = await _roomTypeRepository.GetAsync(roomTypeId)
                 ?? throw new NotFoundException($"Room type {roomTypeId} not found.");
 
-            if (role is Roles.HotelOwner or Roles.Manager && _currentUserService.HotelId == roomType.HotelId) return;
+            if (role is Roles.HotelOwner or Roles.HR && _currentUserService.HotelId == roomType.HotelId) return;
 
             throw new ForbiddenException("You don't have permission to manage rate plans for this hotel.");
         }

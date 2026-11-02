@@ -1,4 +1,4 @@
-﻿using HMS.AttendanceService.Common.Exceptions;
+using HMS.AttendanceService.Common.Exceptions;
 using HMS.AttendanceService.Common.Service;
 using HMS.AttendanceService.Domain.Data;
 using HMS.AttendanceService.DTO.Attendance;
@@ -31,6 +31,7 @@ namespace HMS.AttendanceService.Service
             var tenantId = _currentUserService.TenantId
                 ?? throw new ForbiddenException("Missing TenantId claim.");
 
+            EnsureOwnRecord(dto.StaffId);
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
             var existing = await _attendanceRepository.GetTodayRecordAsync(hotelId, dto.StaffId, today);
@@ -58,6 +59,7 @@ namespace HMS.AttendanceService.Service
             var hotelId = _currentUserService.HotelId
                 ?? throw new ForbiddenException("Missing HotelId claim.");
 
+            EnsureOwnRecord(dto.StaffId);
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
             var attendance = await _attendanceRepository.GetTodayRecordAsync(hotelId, dto.StaffId, today)
@@ -68,7 +70,7 @@ namespace HMS.AttendanceService.Service
 
             attendance.ClockOutTime = DateTime.UtcNow;
             var duration = attendance.ClockOutTime.Value - attendance.ClockInTime;
-            attendance.TotalHours = duration.Hours + (duration.Minutes / 100.0m);
+            attendance.TotalHours = Math.Round((decimal)duration.TotalHours, 2);
             attendance.UpdatedAt = DateTime.UtcNow;
 
             if (!string.IsNullOrEmpty(dto.Remarks))
@@ -94,19 +96,36 @@ namespace HMS.AttendanceService.Service
             var hotelId = _currentUserService.HotelId
                 ?? throw new ForbiddenException("Missing HotelId claim.");
 
+            if (_currentUserService.Role is "Staff" && staffId != _currentUserService.StaffId)
+                throw new ForbiddenException("You can only view your own attendance.");
+
             var list = await _attendanceRepository.GetStaffHistoryAsync(hotelId, staffId, startDate, endDate);
             return _mapper.Map<List<AttendanceDto>>(list);
         }
 
         public async Task<AttendanceDto> ManualCreateAsync(CreateAttendanceDto dto)
         {
+            dto.HotelId = _currentUserService.HotelId
+                ?? throw new ForbiddenException("Missing HotelId claim.");
+            dto.TenantId = _currentUserService.TenantId
+                ?? throw new ForbiddenException("Missing TenantId claim.");
+
             return await _attendanceRepository.AddAsync<CreateAttendanceDto, AttendanceDto>(dto);
+        }
+
+        private void EnsureOwnRecord(Guid staffId)
+        {
+            if (staffId != _currentUserService.StaffId)
+                throw new ForbiddenException("You can only clock in or out for yourself.");
         }
 
         public async Task UpdateAsync(Guid id, UpdateAttendanceDto dto)
         {
-            if (!await _attendanceRepository.ExistsAsync(a => a.AttendanceId == id))
-                throw new NotFoundException($"Attendance record with ID '{id}' was not found.");
+            var record = await _attendanceRepository.GetAsync(id)
+                ?? throw new NotFoundException($"Attendance record with ID '{id}' was not found.");
+
+            if (record.HotelId != _currentUserService.HotelId)
+                throw new ForbiddenException("Access denied.");
 
             await _attendanceRepository.UpdateAsync(id, dto);
         }

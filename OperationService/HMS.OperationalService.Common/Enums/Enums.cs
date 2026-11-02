@@ -1,7 +1,8 @@
-﻿namespace HMS.OperationalService.Common.Enums
+namespace HMS.OperationalService.Common.Enums
 {
     public enum TaskPriority { Low, Medium, High, Urgent }
     public enum TaskStatus { Pending, InProgress, Completed, Cancelled, Resolved }
+    public enum HousekeepingTaskType { Cleaning, Turndown, DeepClean, Laundry, Restock }
     public enum MaintenanceCategory { Plumbing, Electrical, HVAC, Carpentry, Appliance, General }
     public enum ServiceRequestType { Dining, HousekeepingAmenity, Transport, Concierge, Luggage }
     public enum InspectionTyperoutine { Daily, Checkout, DeepClean, QualityAudit }

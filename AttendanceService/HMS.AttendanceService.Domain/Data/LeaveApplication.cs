@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HMS.AttendanceService.Domain.Data
@@ -38,6 +38,12 @@ namespace HMS.AttendanceService.Domain.Data
         public string Status { get; set; } = "Pending"; // Pending, Approved, Rejected, Cancelled
 
         public DateOnly AppliedOn { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        [MaxLength(20)]
+        public string RequesterRole { get; set; } = "Staff";
+
+        [MaxLength(100)]
+        public string? Department { get; set; }
 
         public Guid? ApprovedByStaffId { get; set; }
 

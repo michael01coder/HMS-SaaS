@@ -1,7 +1,5 @@
-﻿using HMS.OperationalService.Domain.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using HMS.OperationalService.Domain.Data;
+using HMS.OperationalService.DTO;
 
 namespace HMS.OperationalService.Service.Contracts
 {
@@ -9,8 +7,8 @@ namespace HMS.OperationalService.Service.Contracts
     {
         Task<IEnumerable<ServiceRequest>> GetAllAsync();
         Task<ServiceRequest> GetByIdAsync(int id);
-        Task<ServiceRequest> CreateAsync(ServiceRequest request);
-        Task UpdateAsync(ServiceRequest request);
+        Task<ServiceRequest> CreateAsync(ServiceRequestDto dto);
+        Task UpdateAsync(int id, ServiceRequestDto dto);
         Task DeleteAsync(int id);
     }
 }
